@@ -28,19 +28,23 @@ function displayTask(task) {
     taskItem.innerHTML = `
         <h3>${task.title}</h3>
         <p>${task.description || ''}</p>
-        <button onclick="completeTask(${task.id})">Complete</button>
+        <p>Completed: ${task.completed ? 'Yes' : 'No'}</p>
+        <button onclick="updateTask(${task.id})">Update</button>
         <button onclick="deleteTask(${task.id})">Delete</button>
     `;
     taskList.appendChild(taskItem);
 }
 
-function completeTask(taskId) {
+function updateTask(taskId) {
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+
     fetch(`/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ completed: true })
+        body: JSON.stringify({ title, description })
     })
     .then(response => response.json())
     .then(data => {
@@ -55,20 +59,22 @@ function deleteTask(taskId) {
     })
     .then(response => {
         if (response.status === 200) {
-            displayTasks();
+            displayTaskList();
         }
     })
     .catch(error => console.error('Error:', error));
 }
 
-function searchTasks() {
-    const query = document.getElementById('search-input').value;
-    fetch(`/tasks/search?query=${query}`)
+function displayTaskList() {
+    const taskList = document.getElementById('task-list');
+    taskList.innerHTML = ''; // Clear existing tasks
+
+    fetch('/tasks')
         .then(response => response.json())
-        .then(data => {
-            const taskList = document.getElementById('task-list');
-            taskList.innerHTML = ''; // Clear existing tasks
-            data.forEach(task => displayTask(task));
+        .then(tasks => {
+            tasks.forEach(task => displayTask(task));
         })
         .catch(error => console.error('Error:', error));
 }
+
+searchTasks(); // Initial search on page load

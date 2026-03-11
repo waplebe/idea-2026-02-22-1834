@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 import sqlite3
 
 DATABASE_URL = "sqlite:///tasks.db"
@@ -28,7 +28,7 @@ create_db()
 class Task(BaseModel):
     id: int
     title: str
-    description: str | None = None
+    description: Optional[str] = None
     completed: bool = False
 
 @app.get("/tasks", response_model=List[Task])
