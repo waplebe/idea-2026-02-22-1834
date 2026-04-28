@@ -94,7 +94,7 @@ async def delete_task(task_id: int):
     conn.close()
     return {"message": "Task deleted"}
 
-@app.get("/tasks/search", response_model=List[Task])
+@app.get("/tasks/search")
 async def search_tasks(query: str = None):
     conn = sqlite3.connect(DATABASE_URL)
     cursor = conn.cursor()
